@@ -237,23 +237,22 @@ class GoogleIAPService
         ];
         $headerArray = [];
         $headerArray[] = 'Content-type: application/json;charset=UTF-8';
-        $headerArray[] = 'Host:googleapis.transmit.com';
 
         $url = "https://www.googleapis.com/androidpublisher/v3/applications/{$packageName}/purchases/products/{$productId}/tokens/{$token}:acknowledge?access_token={$accessToken}";
-        $url = "http://ec2-54-179-190-242.ap-southeast-1.compute.amazonaws.com:8079/androidpublisher/v3/applications/{$packageName}/purchases/products/{$productId}/tokens/{$token}:acknowledge?access_token={$accessToken}";
 
         $curl =curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_POST,1);
         curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($postBody));
-        curl_setopt($curl, CURLOPT_TIMEOUT, 10);    // todo 测试，延长到10秒
+        curl_setopt($curl, CURLOPT_TIMEOUT, 5);    // todo 按需修改超时秒数
         curl_setopt($curl, CURLOPT_RETURNTRANSFER,1);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headerArray);
         $httpRespond = curl_exec($curl);
         $errno = curl_errno($curl);
         $httpCode = curl_getinfo($curl,CURLINFO_HTTP_CODE);
         if ($errno != 0) {
-            TraceLog::warn("curl请求失败;url:{$url};errno:{$errno};httpCode:{$httpCode}"." ,curl_info:".json_encode(curl_getinfo($curl)),'alarm_observation');
+            // todo 按需进行异常处理
+            return false;
         }
         curl_close($curl);
 
@@ -374,10 +373,9 @@ class GoogleIAPService
      * @param $topic
      * @return array
      */
-    public static function addDeviceToTopic($deviceToken, $topic)
+    public function addDeviceToTopic($deviceToken, $topic)
     {
-        $googleApiServiceObj = new GoogleIAPService();
-        $configArray = $googleApiServiceObj->getOAuth2Config();
+        $configArray = $this->getOAuth2Config();
         $apiKey = $configArray['fcmAPIKey'];
 
         $headerArray = [];
