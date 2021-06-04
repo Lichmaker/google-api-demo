@@ -218,7 +218,7 @@ class GoogleIAPService
     }
 
     /**
-     * 核销订单
+     * 确认订单
      * https://developers.google.com/android-publisher/api-ref/purchases/products/acknowledge
      *
      * @param string $token
